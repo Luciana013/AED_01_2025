@@ -1,42 +1,40 @@
 #include "stdio.h"
+#include "stdlib.h"
 
-#define MAX 100  // Tamanho máximo da pilha
+typedef struct Nodo {
+    int valor;
+    struct Nodo* proximo;
+} Nodo;
 
 typedef struct {
-    int elementos[MAX];
-    int topo;
+    Nodo* topo;
 } Pilha;
 
-// Função para inicializar a pilha
 void inicializarPilha(Pilha* pilha) {
-    pilha->topo = -1;
+    pilha->topo = NULL;
 }
 
-// Função para verificar se a pilha está vazia
 int pilhaVazia(Pilha* pilha) {
-    return pilha->topo == -1;
+    return pilha->topo == NULL;
 }
 
-// Função para adicionar um elemento na pilha
 void push(Pilha* pilha, int valor) {
-    if (pilha->topo < MAX - 1) {
-        pilha->topo++;
-        pilha->elementos[pilha->topo] = valor;
-    } else {
-        printf("Pilha cheia!\n");
-    }
+    Nodo* novoNodo = (Nodo*)malloc(sizeof(Nodo));
+    novoNodo->valor = valor;
+    novoNodo->proximo = pilha->topo;
+    pilha->topo = novoNodo;
 }
 
-// Função para remover um elemento da pilha
 int pop(Pilha* pilha) {
-    if (!pilhaVazia(pilha)) {
-        int valor = pilha->elementos[pilha->topo];
-        pilha->topo--;
-        return valor;
-    } else {
+    if (pilhaVazia(pilha)) {
         printf("Pilha vazia!\n");
-        return -1;  // Retorna um valor inválido
+        return -1;
     }
+    Nodo* nodoRemovido = pilha->topo;
+    int valor = nodoRemovido->valor;
+    pilha->topo = pilha->topo->proximo;
+    free(nodoRemovido);
+    return valor;
 }
 
 int main() {
@@ -47,23 +45,25 @@ int main() {
     printf("Digite o número de elementos: ");
     scanf("%d", &n);
 
-    // Lê os elementos e empilha
+    Nodo* temp = NULL;
     for (int i = 0; i < n; i++) {
         scanf("%d", &valor);
         push(&pilha, valor);
     }
 
-    // Inicializa menor e posição com o primeiro elemento da pilha
-    menor = pilha.elementos[0];
+    temp = pilha.topo;
+    menor = temp->valor;
     posicao = 0;
+    int indice = 0;
+    temp = temp->proximo;
 
-    // Verifica o menor valor e sua posição
-    for (int i = 1; i < n; i++) {
-        int elementoAtual = pilha.elementos[i];
-        if (elementoAtual < menor) {
-            menor = elementoAtual;
-            posicao = i;
+    while (temp != NULL) {
+        indice++;
+        if (temp->valor < menor) {
+            menor = temp->valor;
+            posicao = indice;
         }
+        temp = temp->proximo;
     }
 
     printf("Menor valor: %d\n", menor);
