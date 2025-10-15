@@ -1,32 +1,51 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int main() {
-    int NC;
-    scanf("%d", &NC);
+void insertion_sort(int *arr, int n) {
+    int i, key, j;
+    for (i = 1; i < n; i++) {
+        key = arr[i];
+        j = i - 1;
 
-    while (NC--) {
-        int N;
-        scanf("%d", &N);
-
-        int count[231] = {0}; // alturas de 20 a 230
-
-        for (int i = 0; i < N; i++) {
-            int h;
-            scanf("%d", &h);
-            count[h]++;
+        while (j >= 0 && arr[j] > key) {
+            arr[j + 1] = arr[j];
+            j = j - 1;
         }
+        arr[j + 1] = key;
+    }
+}
 
-        int first = 1;
-        for (int h = 20; h <= 230; h++) {
-            while (count[h]--) {
-                if (!first) printf(" ");
-                printf("%d", h);
-                first = 0;
+void solve_1566_insertion() {
+    int NC; 
+    
+    if (scanf("%d", &NC) != 1) return;
+
+    for (int c = 0; c < NC; ++c) {
+        int N; 
+        if (scanf("%d", &N) != 1) break;
+
+        int *heights = (int *)malloc(N * sizeof(int));
+        if (heights == NULL) return;
+
+        for (int i = 0; i < N; ++i) {
+            if (scanf("%d", &heights[i]) != 1) {
+                free(heights);
+                return;
             }
         }
-        printf("\n");
-    }
 
+        insertion_sort(heights, N);
+
+        for (int i = 0; i < N; ++i) {
+            printf("%d%s", heights[i], (i == N - 1) ? "" : " ");
+        }
+        printf("\n");
+
+        free(heights);
+    }
+}
+
+int main() {
+    solve_1566_insertion();
     return 0;
 }
