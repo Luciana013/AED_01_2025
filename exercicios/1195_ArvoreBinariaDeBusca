@@ -1,0 +1,93 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Nodo {
+    int valor;
+    struct Nodo *esq;
+    struct Nodo *dir;
+} Nodo;
+
+Nodo* inserir(Nodo *, int);
+void exibirPre(Nodo *);
+void exibirIn(Nodo *);
+void exibirPost(Nodo *);
+void liberar(Nodo *);
+
+int main() {
+    unsigned short i;
+    int x;
+    unsigned short qtdNodos;
+    unsigned short qtdCasos, caso = 0;
+
+    scanf("%hu", &qtdCasos);
+
+    while (qtdCasos--) {
+        Nodo *raiz = NULL;
+        scanf("%hu", &qtdNodos);
+
+        for (i = 0; i < qtdNodos; i++) {
+            scanf("%d", &x);
+            raiz = inserir(raiz, x);
+        }
+
+        printf("Case %hu:\n", ++caso);
+        printf("Pre.:");
+        exibirPre(raiz);
+        printf("\n");
+        printf("In..:");
+        exibirIn(raiz);
+        printf("\n");
+        printf("Post:");
+        exibirPost(raiz);
+        printf("\n\n");
+        liberar(raiz);
+    }
+
+    return 0;
+}
+
+Nodo* inserir(Nodo *raiz, int valor) {
+    if (!raiz) {
+        raiz = (Nodo *) malloc(sizeof(Nodo));
+        raiz->valor = valor;
+        raiz->esq = raiz->dir = NULL;
+    } else if (raiz->valor > valor) {
+        raiz->esq = inserir(raiz->esq, valor);
+    } else {
+        raiz->dir = inserir(raiz->dir, valor);
+    }
+    return raiz;
+}
+
+void exibirPost(Nodo *raiz) {
+    if (raiz) {
+        exibirPost(raiz->esq);
+        exibirPost(raiz->dir);
+        printf(" %d", raiz->valor);
+    }
+}
+
+void exibirPre(Nodo *raiz) {
+    if (raiz) {
+        printf(" %d", raiz->valor);
+        exibirPre(raiz->esq);
+        exibirPre(raiz->dir);
+    }
+}
+
+void exibirIn(Nodo *raiz) {
+    if (raiz) {
+        exibirIn(raiz->esq);
+        printf(" %d", raiz->valor);
+        exibirIn(raiz->dir);
+    }
+}
+
+void liberar(Nodo *raiz) {
+    if (raiz) {
+        liberar(raiz->esq);
+        liberar(raiz->dir);
+        free(raiz);
+        raiz = NULL;
+    }
+}
